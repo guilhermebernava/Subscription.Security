@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35707.178 d17.12
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Subscription.Security", "Subscription.Security\Subscription.Security.csproj", "{05FDAF68-C6AE-4CEC-845B-1DED234E00FA}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3C0F8D59-D793-4D41-AE61-578721329E81} = {3C0F8D59-D793-4D41-AE61-578721329E81}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Subscription.Services", "Subscription.Services\Subscription.Services.csproj", "{3C0F8D59-D793-4D41-AE61-578721329E81}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{05FDAF68-C6AE-4CEC-845B-1DED234E00FA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{05FDAF68-C6AE-4CEC-845B-1DED234E00FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{05FDAF68-C6AE-4CEC-845B-1DED234E00FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{05FDAF68-C6AE-4CEC-845B-1DED234E00FA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3C0F8D59-D793-4D41-AE61-578721329E81}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3C0F8D59-D793-4D41-AE61-578721329E81}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3C0F8D59-D793-4D41-AE61-578721329E81}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3C0F8D59-D793-4D41-AE61-578721329E81}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
