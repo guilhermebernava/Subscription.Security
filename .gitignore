@@ -1,0 +1,11 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs
+/Subscription.Security/bin/Debug/net9.0
+/Subscription.Security/obj
+/Subscription.Services/bin/Debug/net9.0
+/Subscription.Services/obj
+appsettings.json
+/Subscription.Security/Subscription.Security.csproj.user
