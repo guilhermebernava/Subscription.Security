@@ -10,6 +10,18 @@ builder.Services.AddOpenApi();
 
 builder.Services.AddScoped<IAuthServices,AuthServices>();
 
+var myAllowedOrigins = "_myAllowedOrigins";
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: myAllowedOrigins,
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:4200")
+                  .AllowAnyMethod()
+                  .AllowAnyHeader();
+        });
+});
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -25,6 +37,7 @@ builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
+app.UseCors(myAllowedOrigins);
 app.UseAuthentication();
 app.UseAuthorization();
 
