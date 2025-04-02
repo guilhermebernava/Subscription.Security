@@ -84,6 +84,49 @@ public class AuthServices : IAuthServices
         }
     }
 
+    public async Task<bool> ResetPasswordAsync(Login model)
+    {
+        if(model.NewPassword == null) return false;
+        try
+        {
+            var authRequest = new InitiateAuthRequest
+            {
+                AuthFlow = AuthFlowType.USER_PASSWORD_AUTH,
+                ClientId = _appClientId,
+                AuthParameters = new Dictionary<string, string>
+            {
+                { "USERNAME", model.Email },
+                { "PASSWORD", model.Password },
+                { "SECRET_HASH", CalculateSecretHash(model.Email)},
+            }
+            };
+
+            var authResponse = await _client.InitiateAuthAsync(authRequest);
+
+            if (authResponse.HttpStatusCode != HttpStatusCode.OK)
+                return false;
+
+            var passwordRequest = new AdminSetUserPasswordRequest
+            {
+                UserPoolId = _userPoolId,
+                Username = model.Email,
+                Password = model.NewPassword,
+                Permanent = true
+            };
+
+            var passwordResponse = await _client.AdminSetUserPasswordAsync(passwordRequest);
+            return passwordResponse.HttpStatusCode == HttpStatusCode.OK;
+        }
+        catch (NotAuthorizedException)
+        {
+            return false;
+        }
+        catch (Exception ex)
+        {
+            return false;
+        }
+    }
+
     private string CalculateSecretHash(string email)
     {
         var keyBytes = Encoding.UTF8.GetBytes(_appSecret);

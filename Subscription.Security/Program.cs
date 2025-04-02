@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Subscription.Services.Interfaces;
 using Subscription.Services.Models;
@@ -61,6 +62,15 @@ app.MapPost("/login", async ([FromBody] Login model, [FromServices] IAuthService
 app.MapPost("/confirmSignUp", async ([FromBody] Login model, [FromServices] IAuthServices services) =>
 {
     var result = await services.ConfirmSignUpAsync(model);
+    if (!result) Results.BadRequest();
+    return Results.Ok(result);
+});
+
+
+app.MapPost("/resetPassword", async ([FromBody] Login model, [FromServices] IAuthServices services) =>
+{
+    var result = await services.ResetPasswordAsync(model);
+    if (!result) Results.BadRequest();
     return Results.Ok(result);
 });
 
