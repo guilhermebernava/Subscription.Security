@@ -1,6 +1,7 @@
 ﻿using Amazon.CognitoIdentityProvider;
 using Amazon.CognitoIdentityProvider.Model;
 using Microsoft.Extensions.Configuration;
+using Subscription.Services.Exceptions;
 using Subscription.Services.Interfaces;
 using Subscription.Services.Models;
 using System.Net;
@@ -24,16 +25,26 @@ public class AuthServices : IAuthServices
         _userPoolId = configuration["AWS:UserPoolId"]!;
     }
 
-    public async Task<bool> ConfirmSignUpAsync(Login model)
+    public async Task<bool> ConfirmSignUpAsync(ConfirmSignUpModel model)
     {
-        var request =  new AdminConfirmSignUpRequest
+        var request = new ConfirmSignUpRequest
         {
-            UserPoolId = _userPoolId,
-            Username = model.Email
+            ClientId = _appClientId,
+            SecretHash = CalculateSecretHash(model.Email),
+            Username = model.Email,
+            ConfirmationCode = model.ConfirmationCode
         };
 
-        var finalResponse = await _client.AdminConfirmSignUpAsync(request);
-        return finalResponse.HttpStatusCode == HttpStatusCode.OK;
+        try
+        {
+            var finalResponse = await _client.ConfirmSignUpAsync(request);
+            return finalResponse.HttpStatusCode == HttpStatusCode.OK;
+        }
+        catch(Exception e)
+        {
+            throw new CustomException(e);
+        }
+        
     }
 
     public async Task<bool> CreateUserAsync(CreateUser model)
@@ -50,9 +61,16 @@ public class AuthServices : IAuthServices
             }
         };
 
-        var response = await _client.SignUpAsync(signUpRequest);
+        try
+        {
+            var response = await _client.SignUpAsync(signUpRequest);
 
-        return response.HttpStatusCode == HttpStatusCode.OK;
+            return response.HttpStatusCode == HttpStatusCode.OK;
+        }
+        catch (Exception ex)
+        {
+            throw new CustomException(ex);
+        }
     }
 
     public async Task<string> LoginAsync(Login model)
@@ -76,17 +94,16 @@ public class AuthServices : IAuthServices
         }
         catch (UserNotConfirmedException e)
         {
-            return "User not confirmed yet, change the password";
+            throw new CustomException(e);
         }
-        catch (Exception e)
+        catch (NotAuthorizedException e)
         {
-            return e.Message;
+            throw new CustomException(e);
         }
     }
 
-    public async Task<bool> ResetPasswordAsync(Login model)
+    public async Task<bool> ResetPasswordAsync(ResetPasswordModel model)
     {
-        if(model.NewPassword == null) return false;
         try
         {
             var authRequest = new InitiateAuthRequest
@@ -96,7 +113,7 @@ public class AuthServices : IAuthServices
                 AuthParameters = new Dictionary<string, string>
             {
                 { "USERNAME", model.Email },
-                { "PASSWORD", model.Password },
+                { "PASSWORD", model.OldPassword },
                 { "SECRET_HASH", CalculateSecretHash(model.Email)},
             }
             };
@@ -117,13 +134,13 @@ public class AuthServices : IAuthServices
             var passwordResponse = await _client.AdminSetUserPasswordAsync(passwordRequest);
             return passwordResponse.HttpStatusCode == HttpStatusCode.OK;
         }
-        catch (NotAuthorizedException)
+        catch (NotAuthorizedException e)
         {
-            return false;
+            throw new CustomException(e);
         }
-        catch (Exception ex)
+        catch (Exception e)
         {
-            return false;
+            throw new CustomException(e);
         }
     }
 
