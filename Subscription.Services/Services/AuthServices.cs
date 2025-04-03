@@ -73,7 +73,7 @@ public class AuthServices : IAuthServices
         }
     }
 
-    public async Task<string> LoginAsync(Login model)
+    public async Task<LoginModel> LoginAsync(Login model)
     {
         var authRequest = new InitiateAuthRequest
         {
@@ -87,16 +87,21 @@ public class AuthServices : IAuthServices
             }
         };
 
+        var userRequest = new AdminGetUserRequest
+        {
+            UserPoolId = _userPoolId,
+            Username = model.Email
+        };
+
         try
         {
             var authResponse = await _client.InitiateAuthAsync(authRequest);
-            return authResponse.AuthenticationResult.IdToken;
+            var userResponse = await _client.AdminGetUserAsync(userRequest);
+            var userId = userResponse.UserAttributes.Find(attr => attr.Name == "sub")?.Value;
+
+            return new LoginModel { Token = authResponse.AuthenticationResult.IdToken , UserId = userId ?? ""};
         }
-        catch (UserNotConfirmedException e)
-        {
-            throw new CustomException(e);
-        }
-        catch (NotAuthorizedException e)
+        catch(Exception e)
         {
             throw new CustomException(e);
         }
@@ -154,5 +159,4 @@ public class AuthServices : IAuthServices
 
         return Convert.ToBase64String(hashBytes);
     }
-
 }

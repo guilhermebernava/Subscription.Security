@@ -49,7 +49,6 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
-
 app.MapPost("/createUser", async ([FromBody] CreateUser model, [FromServices] IAuthServices services) =>
 {
     var result = await services.CreateUserAsync(model);
