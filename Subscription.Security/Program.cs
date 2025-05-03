@@ -31,6 +31,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
         {
             ValidateIssuer = true,
+            ValidateAudience = false,
         };
     });
 
@@ -77,5 +78,4 @@ app.MapPost("/resetPassword", async ([FromBody] ResetPasswordModel model, [FromS
 });
 
 app.UseHttpsRedirection();
-
 app.Run();

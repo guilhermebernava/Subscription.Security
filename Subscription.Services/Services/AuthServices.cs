@@ -99,7 +99,7 @@ public class AuthServices : IAuthServices
             var userResponse = await _client.AdminGetUserAsync(userRequest);
             var userId = userResponse.UserAttributes.Find(attr => attr.Name == "sub")?.Value;
 
-            return new LoginModel { Token = authResponse.AuthenticationResult.IdToken , UserId = userId ?? ""};
+            return new LoginModel { Token = authResponse.AuthenticationResult.AccessToken , UserId = userId ?? ""};
         }
         catch(Exception e)
         {
